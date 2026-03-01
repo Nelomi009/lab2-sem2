@@ -123,16 +123,16 @@ namespace Zoo {
       }
 
       Console.WriteLine("\n=== ALL ANIMALS ===");
+      int startIndex = 1;
       for (int animalIndex = 0; animalIndex < _animals.Count; ++animalIndex) {
-        Console.WriteLine($"{animalIndex + 1}. {_animals[animalIndex].GetInfo()}");
+        Console.WriteLine($"{animalIndex + startIndex}. {_animals[animalIndex].GetInfo()}");
       }
     }
 
     public void ShowByIndex(int index) {
       if (index >= 0 && index < _animals.Count) {
         Console.WriteLine(_animals[index].GetInfo());
-      }
-      else {
+      } else {
         Console.WriteLine("Invalid number");
       }
     }
@@ -184,8 +184,7 @@ namespace Zoo {
             Console.Write("Number: ");
             if (int.TryParse(Console.ReadLine(), out int num)) {
               zoo.ShowByIndex(num - 1);
-            }
-            else {
+            } else {
               Console.WriteLine("Invalid input. Please enter a number.");
             }
             break;
