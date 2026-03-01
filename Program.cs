@@ -1,9 +1,8 @@
 ﻿/**************************
 * Автор: Nikita Chernenko *
-* Дата: 26.02.2026        *
+* Дата: 28.02.2026        *
 * Вариант -               *
 ***************************/
-
 
 using System;
 using System.Collections.Generic;
@@ -100,7 +99,6 @@ namespace Zoo {
   class ZooManager {
     private static ZooManager s_instance;
     private List<Animal> _animals = new List<Animal>();
-    private const int DisplayOffset = 1;
 
     private ZooManager() { }
 
@@ -125,16 +123,16 @@ namespace Zoo {
       }
 
       Console.WriteLine("\n=== ALL ANIMALS ===");
+      int startIndex = 1;
       for (int animalIndex = 0; animalIndex < _animals.Count; ++animalIndex) {
-        Console.WriteLine($"{animalIndex + DisplayOffset}. {_animals[animalIndex].GetInfo()}");
+        Console.WriteLine($"{animalIndex + startIndex}. {_animals[animalIndex].GetInfo()}");
       }
     }
 
     public void ShowByIndex(int index) {
       if (index >= 0 && index < _animals.Count) {
         Console.WriteLine(_animals[index].GetInfo());
-      }
-      else {
+      } else {
         Console.WriteLine("Invalid number");
       }
     }
@@ -157,8 +155,6 @@ namespace Zoo {
   class Program {
     static void Main() {
       ZooManager zoo = ZooManager.Instance;
-      const int menuExitOption = 5;
-      const int indexToDisplayOffset = 1;
 
       // тестовые животные
       zoo.Add(new Mammal("Gazirovkin", 5, "Savanna", "Meat", true));
@@ -179,22 +175,37 @@ namespace Zoo {
 
         string choice = Console.ReadLine();
 
-        if (choice == "1") {
-          zoo.ShowAll();
-        } else if (choice == "2") {
-          Console.Write("Number: ");
-          int num = int.Parse(Console.ReadLine());
-          zoo.ShowByIndex(num - indexToDisplayOffset);
-        } else if (choice == "3") {
-          Console.Write("Name: ");
-          string name = Console.ReadLine();
-          zoo.ShowByName(name);
-        } else if (choice == "4") {
-          AddAnimal(zoo);
-        } else if (choice == "5") {
-          exit = true;
-        } else {
-          Console.WriteLine("Error: enter 1-5");
+        switch (choice) {
+          case "1":
+            zoo.ShowAll();
+            break;
+
+          case "2":
+            Console.Write("Number: ");
+            if (int.TryParse(Console.ReadLine(), out int num)) {
+              zoo.ShowByIndex(num - 1);
+            } else {
+              Console.WriteLine("Invalid input. Please enter a number.");
+            }
+            break;
+
+          case "3":
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+            zoo.ShowByName(name);
+            break;
+
+          case "4":
+            AddAnimal(zoo);
+            break;
+
+          case "5":
+            exit = true;
+            break;
+
+          default:
+            Console.WriteLine("Error: enter 1-5");
+            break;
         }
       }
     }
@@ -217,7 +228,10 @@ namespace Zoo {
       string name = Console.ReadLine();
 
       Console.Write("Age: ");
-      int age = int.Parse(Console.ReadLine());
+      if (!int.TryParse(Console.ReadLine(), out int age)) {
+        Console.WriteLine("Invalid age input.");
+        return;
+      }
 
       Console.Write("Habitat: ");
       string habitat = Console.ReadLine();
@@ -225,32 +239,43 @@ namespace Zoo {
       Console.Write("Food: ");
       string food = Console.ReadLine();
 
-      if (type == "1") { // млекопитающие
-        Console.Write("Has fur? (yes/no): ");
-        bool fur = Console.ReadLine() == "yes";
-        zoo.Add(new Mammal(name, age, habitat, food, fur));
-      }
-      else if (type == "2") { // птицы
-        Console.Write("Wingspan (cm): ");
-        double wings = double.Parse(Console.ReadLine());
-        zoo.Add(new Bird(name, age, habitat, food, wings));
-      }
-      else if (type == "3") { // рыбы
-        Console.Write("Water type (fresh/salt): ");
-        string water = Console.ReadLine();
-        zoo.Add(new Fish(name, age, habitat, food, water));
-      }
-      else if (type == "4") { // рептилии
-        Console.Write("Poisonous? (yes/no): ");
-        bool poison = Console.ReadLine() == "yes";
-        zoo.Add(new Reptile(name, age, habitat, food, poison));
-      }
-      else if (type == "5") { // земноводные
-        Console.Write("Skin type: ");
-        string skin = Console.ReadLine();
-        zoo.Add(new Amphibian(name, age, habitat, food, skin));
-      } else {
-        Console.WriteLine("Invalid type");
+      switch (type) {
+        case "1": // млекопитающие
+          Console.Write("Has fur? (yes/no): ");
+          bool fur = Console.ReadLine() == "yes";
+          zoo.Add(new Mammal(name, age, habitat, food, fur));
+          break;
+
+        case "2": // птицы
+          Console.Write("Wingspan (cm): ");
+          if (!double.TryParse(Console.ReadLine(), out double wings)) {
+            Console.WriteLine("Invalid wingspan input.");
+            return;
+          }
+          zoo.Add(new Bird(name, age, habitat, food, wings));
+          break;
+
+        case "3": // рыбы
+          Console.Write("Water type (fresh/salt): ");
+          string water = Console.ReadLine();
+          zoo.Add(new Fish(name, age, habitat, food, water));
+          break;
+
+        case "4": // рептилии
+          Console.Write("Poisonous? (yes/no): ");
+          bool poison = Console.ReadLine() == "yes";
+          zoo.Add(new Reptile(name, age, habitat, food, poison));
+          break;
+
+        case "5": // земноводные
+          Console.Write("Skin type: ");
+          string skin = Console.ReadLine();
+          zoo.Add(new Amphibian(name, age, habitat, food, skin));
+          break;
+
+        default:
+          Console.WriteLine("Invalid type");
+          break;
       }
     }
   }
